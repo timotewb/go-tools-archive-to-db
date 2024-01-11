@@ -37,7 +37,13 @@ func main(){
 		log.Fatal(err)
 	}
 
-	dbFile := "db.sqlite"
+	// executablePath, err := os.Executable()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// dbDir := filepath.Dir(executablePath)
+
+	dbFile := filepath.Join("go-tools-archive-to-db.sqlite")
 	tableName := makeValidTableName(filepath.Base(inDir))
 	fmt.Println("--------------------------------------------------")
 	fmt.Println("Start processing for:")
@@ -45,6 +51,10 @@ func main(){
 	fmt.Printf(" - %s\n", dbFile)
 	fmt.Printf(" - %s\n", tableName)
 	fmt.Println("--------------------------------------------------")
+
+	zenity.Info(`- `+inDir+`
+	 - `+dbFile+`
+	 - `+tableName, zenity.Title("Details"))
 
 
 	// setup database
@@ -63,10 +73,20 @@ func main(){
 	// drop table if exists
 	_, err = db.Exec("DROP TABLE IF EXISTS "+tableName)
 	if err != nil {
+		zenity.Error(
+			err.Error(),
+			zenity.Title("Error"),
+			zenity.ErrorIcon,
+		)
 		log.Fatal(err)
 	}
 	_, err = db.Exec("DROP TABLE IF EXISTS "+tableName+"_err")
 	if err != nil {
+		zenity.Error(
+			err.Error(),
+			zenity.Title("Error"),
+			zenity.ErrorIcon,
+		)
 		log.Fatal(err)
 	}
 
